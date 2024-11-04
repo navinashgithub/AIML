@@ -1,0 +1,69 @@
+import heapq
+
+class Node:
+    def __init__(self, position, parent=None):
+        self.position = position
+        self.parent = parent
+        self.g = 0  # Cost from start to current node
+        self.h = 0  # Heuristic cost from current node to goal
+        self.f = 0  # Total cost
+
+    def __lt__(self, other):
+        return self.f < other.f
+
+def astar(maze, start, end):
+    start_node = Node(start)
+    end_node = Node(end)
+
+    open_list = []
+    closed_list = set()
+
+    heapq.heappush(open_list, start_node)
+
+    while open_list:
+        current_node = heapq.heappop(open_list)
+        closed_list.add(current_node.position)
+
+        if current_node.position == end_node.position:
+            path = []
+            while current_node is not None:
+                path.append(current_node.position)
+                current_node = current_node.parent
+            return path[::-1]
+
+        neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        for offset in neighbors:
+            neighbor_position = (current_node.position[0] + offset[0], current_node.position[1] + offset[1])
+
+            if neighbor_position in closed_list:
+                continue
+
+            if maze[neighbor_position[0]][neighbor_position[1]] != 0:
+                continue
+
+            neighbor_node = Node(neighbor_position, current_node)
+            neighbor_node.g = current_node.g + 1
+            neighbor_node.h = abs(neighbor_node.position[0] - end_node.position[0]) + abs(neighbor_node.position[1] - end_node.position[1])
+            neighbor_node.f = neighbor_node.g + neighbor_node.h
+
+            if any(open_node.position == neighbor_node.position and open_node.f <= neighbor_node.f for open_node in open_list):
+                continue
+
+            heapq.heappush(open_list, neighbor_node)
+
+    return None
+
+# Example maze (0 is a free path, 1 is an obstacle)
+maze = [
+    [0, 1, 0, 0, 0],
+    [0, 1, 0, 1, 0],
+    [0, 0, 0, 1, 0],
+    [0, 1, 1, 1, 0],
+    [0, 0, 0, 0, 0]
+]
+
+start = (0, 0)  # Starting position
+end = (4, 4)    # Goal position
+
+path = astar(maze, start, end)
+print("Path:", path)
