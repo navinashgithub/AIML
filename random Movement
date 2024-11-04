@@ -1,0 +1,37 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Number of steps
+num_steps = 1000
+
+# Possible movement options: up, down, left, right
+options = ['up', 'down', 'left', 'right']
+
+# Starting position
+x = [0]
+y = [0]
+
+# Random walk
+for _ in range(num_steps):
+    move = np.random.choice(options)
+    if move == 'up':
+        x.append(x[-1])
+        y.append(y[-1] + 1)
+    elif move == 'down':
+        x.append(x[-1])
+        y.append(y[-1] - 1)
+    elif move == 'left':
+        x.append(x[-1] - 1)
+        y.append(y[-1])
+    elif move == 'right':
+        x.append(x[-1] + 1)
+        y.append(y[-1])
+
+# Plotting the random walk
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, marker='o', markersize=1, linestyle='-')
+plt.title('Random Walk Simulation')
+plt.xlabel('X Position')
+plt.ylabel('Y Position')
+plt.grid()
+plt.show()
