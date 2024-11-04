@@ -1,0 +1,43 @@
+def is_safe(node, color, assignment, graph):
+    for neighbor in graph[node]:
+        if assignment[neighbor] == color:
+            return False
+    return True
+
+def map_coloring(graph, colors, assignment, node):
+    if node is None:
+        return True
+    
+    for color in colors:
+        if is_safe(node, color, assignment, graph):
+            assignment[node] = color
+            if all(map_coloring(graph, colors, assignment, next_node) for next_node in graph if assignment[next_node] is None):
+                return True
+            assignment[node] = None
+    return False
+
+def solve_map_coloring(graph, colors):
+    assignment = {node: None for node in graph}
+    if map_coloring(graph, colors, assignment, next(iter(graph))):
+        return assignment
+    else:
+        return None
+
+# Example graph (map)
+graph = {
+    'A': ['B', 'C', 'D'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['A', 'B', 'C', 'E'],
+    'E': ['D']
+}
+
+colors = ['Red', 'Green', 'Blue', 'Yellow']
+
+solution = solve_map_coloring(graph, colors)
+if solution:
+    print("Solution found:")
+    for region, color in solution.items():
+        print(f"Region {region}: {color}")
+else:
+    print("No solution found")
